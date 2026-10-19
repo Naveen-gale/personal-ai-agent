@@ -1,0 +1,46 @@
+# Environment variables — NEVER commit this file
+.env
+*.env
+*.env.*
+*.env.local
+!agent/.env.example
+*.db
+*.db-shm
+*.db-wal
+
+# Google OAuth credentials and tokens — NEVER commit these
+credentials.json
+token.json
+client_secret*.json
+*.pem
+*.key
+
+# Python virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python bytecode cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# pytest cache and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Node.js (for the backend/frontend)
+node_modules/
+dist/
+dist-ssr/
+*.local
