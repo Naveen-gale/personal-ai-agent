@@ -45,6 +45,12 @@ from agent.tools.tasks_tools import TASKS_TOOLS
 # Reminder Tools
 from agent.tools.reminder_tools import REMINDER_TOOLS
 
+# Workflow Automation Tools
+from agent.tools.workflow_tools import WORKFLOW_TOOLS
+
+# Google Drive tools
+from agent.tools.drive_tools import DRIVE_TOOLS
+
 # General Assistant Tools
 from agent.tools.assistant_tools import get_current_datetime
 
@@ -77,6 +83,10 @@ TOOLS = [
     *TASKS_TOOLS,
     # Reminder tools
     *REMINDER_TOOLS,
+    # Workflow tools
+    *WORKFLOW_TOOLS,
+    # Google Drive tools
+    *DRIVE_TOOLS,
 ]
 
 # Bind tools to the LLM

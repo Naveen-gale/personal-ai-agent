@@ -49,6 +49,24 @@ EXPECTED_TOOL_NAMES = [
     "create_reminder",
     "list_reminders",
     "cancel_reminder",
+    # Workflow Tools
+    "create_workflow_plan",
+    "list_user_workflows",
+    "run_workflow_by_name",
+    "pause_workflow",
+    "resume_workflow",
+    "get_workflow_history",
+    "retry_last_failed_workflow",
+    # Google Drive
+    "list_drive_files",
+    "search_drive_files",
+    "read_drive_file",
+    "create_drive_folder",
+    "create_drive_folder_path",
+    "rename_drive_item",
+    "move_drive_item",
+    "copy_drive_file",
+    "delete_drive_item",
 ]
 
 
@@ -58,12 +76,12 @@ def test_agent_compiles():
     assert agent is not None, "agent must be compiled successfully"
 
 
-def test_all_30_tools_are_registered():
+def test_all_46_tools_are_registered():
     """All supported capability tools must be present in graph.py."""
     from agent.graph import TOOLS
 
     registered_names = [t.name for t in TOOLS]
-    assert len(registered_names) == 30, f"Expected 30 tools, found {len(registered_names)}"
+    assert len(registered_names) == 46, f"Expected 46 tools, found {len(registered_names)}"
 
     for expected in EXPECTED_TOOL_NAMES:
         assert expected in registered_names, f"Tool '{expected}' is missing from graph TOOLS"

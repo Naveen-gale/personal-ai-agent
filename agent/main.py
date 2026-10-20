@@ -35,6 +35,10 @@ CONFIRMATION_TOOL_NAMES = {
     "delete_task",
     "create_reminder",
     "cancel_reminder",
+    "create_workflow_plan",
+    "rename_drive_item",
+    "move_drive_item",
+    "delete_drive_item",
 }
 TOOLS_BY_NAME = {tool.name: tool for tool in TOOLS}
 

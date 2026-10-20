@@ -20,9 +20,14 @@ google-api-python-client==2.201.0
 google-auth==2.62.0
 google-auth-oauthlib==1.5.0
 google-auth-httplib2==0.4.4
+python-multipart==0.0.26
+pypdf==6.3.0
 
 # Environment variable loading
 python-dotenv==1.2.4
+pymongo==4.15.3
+fastapi==0.146.0
+uvicorn==0.54.0
 
 # HTTP and utility libraries (transitive, pinned for reproducibility)
 httpx==0.28.1

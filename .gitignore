@@ -4,6 +4,8 @@
 *.env.*
 *.env.local
 !agent/.env.example
+!backend/.env.example
+!frontend/.env.example
 *.db
 *.db-shm
 *.db-wal

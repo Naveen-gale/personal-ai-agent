@@ -52,11 +52,21 @@ TASKS_SCOPES = [
     "https://www.googleapis.com/auth/tasks",
 ]
 
+DRIVE_SCOPES = [
+    "https://www.googleapis.com/auth/drive",
+]
+
+PHOTOS_PICKER_SCOPES = [
+    "https://www.googleapis.com/auth/photospicker.mediaitems.readonly",
+]
+
 ALL_SCOPES = [
     *GMAIL_SCOPES,
     *CONTACTS_SCOPES,
     *CALENDAR_SCOPES,
     *TASKS_SCOPES,
+    *DRIVE_SCOPES,
+    *PHOTOS_PICKER_SCOPES,
 ]
 
 
