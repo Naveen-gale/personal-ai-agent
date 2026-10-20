@@ -22,6 +22,16 @@ def configure_settings(monkeypatch):
     return Settings.from_env()
 
 
+def test_mongodb_url_accepts_legacy_env_key(monkeypatch):
+    configure_settings(monkeypatch)
+    monkeypatch.delenv("MONGODB_URL")
+    monkeypatch.setenv("MONGO_DB_URL", "mongodb://legacy-name:27017")
+
+    settings = Settings.from_env()
+
+    assert settings.mongodb_url == "mongodb://legacy-name:27017"
+
+
 def test_session_token_is_short_lived_and_scoped(monkeypatch):
     settings = configure_settings(monkeypatch)
 
@@ -48,6 +58,17 @@ def test_health_response_has_request_id():
     assert response.status_code == 200
     assert response.headers["x-request-id"]
     assert response.json()["service"] == "personal-ai-backend"
+
+
+def test_public_config_returns_only_google_web_client_id(monkeypatch):
+    settings = configure_settings(monkeypatch)
+    app.state.settings = settings
+    client = TestClient(app)
+
+    response = client.get("/api/config")
+
+    assert response.status_code == 200
+    assert response.json() == {"google_client_id": settings.google_client_id}
 
 
 def test_api_error_shape_is_consistent_for_unauthenticated_request():

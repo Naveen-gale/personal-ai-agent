@@ -1,0 +1,22 @@
+{
+  "name": "personal-ai-agent",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names agent,backend,frontend,scheduler --prefix-colors blue,green,magenta,yellow \"npm run dev:agent\" \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:scheduler\"",
+    "dev:agent": "agent\\.venv\\Scripts\\python.exe -m uvicorn agent.api:app --host 127.0.0.1 --port 8000 --reload",
+    "dev:backend": "agent\\.venv\\Scripts\\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8001 --reload",
+    "dev:frontend": "npm --prefix frontend run dev -- --host 127.0.0.1",
+    "dev:scheduler": "agent\\.venv\\Scripts\\python.exe -m agent.services.workflow_scheduler",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "test": "agent\\.venv\\Scripts\\python.exe -m pytest backend\\tests agent\\tests -q",
+    "verify": "npm run lint && npm run build && npm run test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

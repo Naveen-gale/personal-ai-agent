@@ -27,7 +27,10 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         required = {
-            "MONGODB_URL": os.getenv("MONGODB_URL", "").strip(),
+            "MONGODB_URL": (
+                os.getenv("MONGODB_URL", "").strip()
+                or os.getenv("MONGO_DB_URL", "").strip()
+            ),
             "AGENT_SERVICE_URL": os.getenv("AGENT_SERVICE_URL", "").strip(),
             "AGENT_SERVICE_TOKEN": os.getenv("AGENT_SERVICE_TOKEN", "").strip(),
             "GOOGLE_CLIENT_ID": os.getenv("GOOGLE_CLIENT_ID", "").strip(),

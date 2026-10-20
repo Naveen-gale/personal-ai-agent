@@ -209,6 +209,12 @@ async def health():
     return {"status": "ok", "service": "personal-ai-backend", "version": app.version}
 
 
+@app.get("/api/config")
+async def public_config(request: Request):
+    settings: Settings = request.app.state.settings
+    return {"google_client_id": settings.google_client_id}
+
+
 @app.get("/api/ready")
 async def readiness(request: Request):
     database = getattr(request.app.state, "database", None)

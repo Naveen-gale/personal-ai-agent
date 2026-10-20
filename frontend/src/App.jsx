@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import WorkflowList from './components/WorkflowList';
 import WorkflowDetailModal from './components/WorkflowDetailModal';
@@ -22,31 +22,7 @@ export default function App() {
   const [runningWfId, setRunningWfId] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) return undefined;
-    checkHealthAndLoad();
-    const interval = setInterval(checkHealthAndLoad, 10000);
-    return () => clearInterval(interval);
-  }, [user]);
-
-  async function checkHealthAndLoad() {
-    try {
-      const healthRes = await apiFetch('/api/health');
-      if (healthRes.ok) {
-        setApiHealthy(true);
-      } else {
-        setApiHealthy(false);
-      }
-    } catch {
-      setApiHealthy(false);
-    }
-
-    loadWorkflows();
-    loadApprovals();
-    loadTools();
-  }
-
-  async function loadWorkflows() {
+  const loadWorkflows = useCallback(async () => {
     try {
       const res = await apiFetch('/api/workflows');
       const data = await res.json();
@@ -58,9 +34,9 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function loadApprovals() {
+  const loadApprovals = useCallback(async () => {
     try {
       const res = await apiFetch('/api/approvals');
       const data = await res.json();
@@ -70,9 +46,9 @@ export default function App() {
     } catch (err) {
       console.error('Failed to load approvals', err);
     }
-  }
+  }, []);
 
-  async function loadTools() {
+  const loadTools = useCallback(async () => {
     try {
       const res = await apiFetch('/api/tools');
       const data = await res.json();
@@ -82,7 +58,28 @@ export default function App() {
     } catch (err) {
       console.error('Failed to load tools', err);
     }
-  }
+  }, []);
+
+  const checkHealthAndLoad = useCallback(async () => {
+    try {
+      const healthRes = await apiFetch('/api/health');
+      setApiHealthy(healthRes.ok);
+    } catch {
+      setApiHealthy(false);
+    }
+    loadWorkflows();
+    loadApprovals();
+    loadTools();
+  }, [loadApprovals, loadTools, loadWorkflows]);
+
+  useEffect(() => {
+    if (!user) return undefined;
+    // This starts an asynchronous network refresh; state changes occur when requests settle.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    checkHealthAndLoad();
+    const interval = setInterval(checkHealthAndLoad, 10000);
+    return () => clearInterval(interval);
+  }, [user, checkHealthAndLoad]);
 
   async function handleRunWorkflow(id) {
     setRunningWfId(id);

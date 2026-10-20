@@ -61,14 +61,53 @@ function loadGoogleIdentityScript() {
 
 export function GoogleSignInButton() {
   const { signIn } = useAuth();
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const [clientId, setClientId] = useState(import.meta.env.VITE_GOOGLE_CLIENT_ID || '');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(Boolean(clientId));
+  const [loading, setLoading] = useState(true);
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (clientId) return undefined;
     let active = true;
-    if (!clientId) return () => { active = false; };
+    let retryTimer;
+
+    async function loadConfig() {
+      let message = 'Google Sign-In is not configured on the backend.';
+      for (let attempt = 0; attempt < 8 && active; attempt += 1) {
+        try {
+          const response = await apiFetch('/api/config');
+          const config = await response.json().catch(() => ({}));
+          if (response.ok && config.google_client_id) {
+            setClientId(config.google_client_id);
+            return;
+          }
+        } catch {
+          message = 'Could not connect to the backend. Check that it is running.';
+        }
+
+        if (attempt < 7) {
+          await new Promise((resolve) => {
+            retryTimer = window.setTimeout(resolve, 1000);
+          });
+        }
+      }
+      if (active) {
+        setError(message);
+        setLoading(false);
+      }
+    }
+
+    loadConfig();
+
+    return () => {
+      active = false;
+      window.clearTimeout(retryTimer);
+    };
+  }, [clientId]);
+
+  useEffect(() => {
+    let active = true;
+    if (!clientId) return undefined;
 
     loadGoogleIdentityScript()
       .then(() => {
@@ -106,11 +145,7 @@ export function GoogleSignInButton() {
     <div className="google-sign-in">
       {loading && <p>Loading Google Sign-In…</p>}
       <div ref={containerRef} />
-      {(error || (!clientId && 'Set VITE_GOOGLE_CLIENT_ID to the Google Web OAuth client ID.')) && (
-        <p className="auth-error" role="alert">
-          {error || 'Set VITE_GOOGLE_CLIENT_ID to the Google Web OAuth client ID.'}
-        </p>
-      )}
+      {error && <p className="auth-error" role="alert">{error}</p>}
     </div>
   );
 }

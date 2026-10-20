@@ -5,9 +5,17 @@ export function setAccessToken(token) {
   accessToken = token;
 }
 
+export function getAccessToken() {
+  return accessToken;
+}
+
+export function apiUrl(path) {
+  return path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+}
+
 export async function apiFetch(path, options = {}) {
   const headers = new Headers(options.headers || {});
-  const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+  const url = apiUrl(path);
   const targetOrigin = new URL(url, window.location.origin).origin;
   const apiOrigin = API_BASE_URL
     ? new URL(API_BASE_URL, window.location.origin).origin

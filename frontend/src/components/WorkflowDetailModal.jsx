@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 
 export default function WorkflowDetailModal({
@@ -11,13 +11,8 @@ export default function WorkflowDetailModal({
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [selectedExec, setSelectedExec] = useState(null);
 
-  useEffect(() => {
-    if (workflow) {
-      loadHistory();
-    }
-  }, [workflow]);
-
-  async function loadHistory() {
+  const loadHistory = useCallback(async () => {
+    if (!workflow) return;
     setLoadingHistory(true);
     try {
       const res = await apiFetch(`/api/workflows/${workflow.id}/executions?limit=10`);
@@ -30,7 +25,13 @@ export default function WorkflowDetailModal({
     } finally {
       setLoadingHistory(false);
     }
-  }
+  }, [workflow]);
+
+  useEffect(() => {
+    // This starts an asynchronous request; it does not synchronously update state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadHistory();
+  }, [loadHistory]);
 
   if (!workflow) return null;
 

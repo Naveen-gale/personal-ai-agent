@@ -7,10 +7,9 @@ from typing import Any
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from agent.auth.gmail_auth import CONTACTS_SCOPES, AGENT_DIR, get_credentials
+from agent.auth.gmail_auth import CONTACTS_SCOPES, TOKEN_FILE, get_credentials
 
 
-TOKEN_FILE = AGENT_DIR / "token.json"
 CONTACT_FIELDS = "names,phoneNumbers,emailAddresses"
 MAX_RESULTS = 50
 

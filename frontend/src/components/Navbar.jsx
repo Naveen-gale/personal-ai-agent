@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Navbar({ activeTab, setActiveTab, pendingCount, apiHealthy }) {
   return (
     <header className="app-header">

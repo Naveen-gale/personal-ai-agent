@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { apiErrorMessage, apiFetch } from '../api';
+import { apiErrorMessage, apiFetch, apiUrl, getAccessToken } from '../api';
 
 async function requestJson(url, options = {}) {
   const response = await apiFetch(url, options);
@@ -278,7 +278,9 @@ export default function DrivePanel({ onAttachContent }) {
       if (currentFolderId) form.append('parent_id', currentFolderId);
       form.append('operation_id', operationId);
       const request = new XMLHttpRequest();
-      request.open('POST', '/api/drive/upload');
+      request.open('POST', apiUrl('/api/drive/upload'));
+      const accessToken = getAccessToken();
+      if (accessToken) request.setRequestHeader('Authorization', `Bearer ${accessToken}`);
       request.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           setUploadProgress((previous) => ({
@@ -322,6 +324,28 @@ export default function DrivePanel({ onAttachContent }) {
     if (failures.length) setError(failures.join('\n'));
     await loadFiles();
     setBusy(false);
+  }
+
+  async function downloadFile(file) {
+    setError('');
+    try {
+      const response = await apiFetch(`/api/drive/files/${encodeURIComponent(file.id)}/download`);
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(apiErrorMessage(data, 'Download failed.'));
+      }
+      const blob = await response.blob();
+      const href = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = href;
+      anchor.download = file.name;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(href);
+    } catch (downloadError) {
+      setError(downloadError.message);
+    }
   }
 
   async function startPhotosPicker() {
@@ -533,9 +557,9 @@ export default function DrivePanel({ onAttachContent }) {
                 </a>
               )}
               {!isFolder && (
-                <a href={`/api/drive/files/${encodeURIComponent(file.id)}/download`}>
+                <button className="drive-download" onClick={() => downloadFile(file)}>
                   Download
-                </a>
+                </button>
               )}
             </div>
           );

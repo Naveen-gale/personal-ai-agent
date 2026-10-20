@@ -15,6 +15,7 @@ Responsibilities:
 
 from pathlib import Path
 from collections.abc import Sequence
+import os
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -25,8 +26,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 # __file__ is auth/gmail_auth.py -> .parents[1] is the agent/ root folder.
 AGENT_DIR = Path(__file__).resolve().parents[1]
 
-CREDENTIALS_FILE = AGENT_DIR / "credentials.json"
-TOKEN_FILE = AGENT_DIR / "token.json"
+CREDENTIALS_FILE = Path(
+    os.getenv("GOOGLE_CREDENTIALS_FILE", str(AGENT_DIR / "credentials.json"))
+).expanduser()
+TOKEN_FILE = Path(
+    os.getenv("GOOGLE_TOKEN_FILE", str(AGENT_DIR / "token.json"))
+).expanduser()
 
 # Minimum OAuth scope needed for full email assistant capabilities:
 # - Reading and searching messages
@@ -212,3 +217,6 @@ if __name__ == "__main__":
         print(f"Token file: {TOKEN_FILE}")
     except Exception as err:
         print(f"\nERROR: Authorization failed: {err}")
+
+
+
